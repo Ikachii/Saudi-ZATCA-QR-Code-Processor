@@ -4,7 +4,7 @@
 This project simplifies the process of extracting and inputting tax details from receipts in accordance with the Saudi Zakat, Tax, and Customs Authority (ZATCA) specifications. The application reads QR codes from receipt images, decodes the tax details, and compiles them into a neatly formatted CSV file. The solution leverages various AI libraries and is designed with user-friendliness in mind, particularly for accountants without technical backgrounds.
 
 ## Motivation
-During my winter break, I visited my father’s company and learned about the challenges they faced with the new Saudi tax system, ZATCA. They had to manually enter tax details from receipts due to budget constraints, making the process time-consuming and error-prone. 
+During my winter break, I visited my father’s company and learned about the challenges they faced with the new Saudi tax system, ZAKAT. They had to manually enter tax details from receipts due to budget constraints, making the process time-consuming and error-prone. 
 
 I noticed that every receipt included a QR code containing the required tax details. However, scanning the QR codes with generic tools yielded unreadable strings. After researching the ZATCA system, I discovered that these strings were TLV-encoded in Base64 format. This realization inspired me to create a program that automates the decoding and data entry process.
 
