@@ -4,7 +4,7 @@
 This project simplifies the process of extracting and inputting tax details from receipts in accordance with the Saudi Zakat, Tax, and Customs Authority (ZATCA) specifications. The application reads QR codes from receipt images, decodes the tax details, and compiles them into a neatly formatted CSV file. The solution leverages various AI libraries and is designed with user-friendliness in mind, particularly for accountants without technical backgrounds.
 
 ## Motivation
-During my winter break, I visited my father’s company and learned about the challenges they faced with the new Saudi tax system, ZATCA. They had to manually enter tax details from receipts due to budget constraints, making the process time-consuming and error-prone.
+During my winter break, I visited my father’s company and learned about the challenges they faced with the new Saudi tax system, ZATCA. They had to manually enter tax details from receipts due to budget constraints, making the process time-consuming and error-prone. 
 
 I noticed that every receipt included a QR code containing the required tax details. However, scanning the QR codes with generic tools yielded unreadable strings. After researching the ZATCA system, I discovered that these strings were TLV-encoded in Base64 format. This realization inspired me to create a program that automates the decoding and data entry process.
 
@@ -47,13 +47,23 @@ I refined the program to process each image individually, regardless of the numb
 #### Code Snippets
 **QR Code Processing:**
 ```python
+# Iterate through each image in the folder
 for i in images:
+    # Initialize the QReader to detect QR codes
     qreader = QReader()
+    
+    # Convert the image to grayscale for better QR code recognition
     image = cv2.cvtColor(i, cv2.COLOR_BGR2GRAY)
+    
+    # Decode the QR code(s) in the image
     decoded_text = qreader.detect_and_decode(image=image)
     
+    # Iterate through each detected QR code and process it
     for t in decoded_text:
+        # Decode the Base64-encoded TLV string
         temp = base64.b64decode(t)
+        
+        # Add the extracted data to the CSV file
         df = add_to_csv(temp)
 ```
 
@@ -61,16 +71,24 @@ for i in images:
 ```python
 from uttlv import TLV
 
+# Function to decode TLV data and add it to the DataFrame
 def add_to_csv(temp):
+    # Initialize the TLV parser
     t = TLV()
+    
+    # Parse the Base64-decoded TLV data into an array
     t.parse_array(temp)
+    
+    # Extract the required fields and decode them as per ZATCA specifications
     df.loc[len(df)] = [
-        t[0x01].decode('utf-8'),
-        t[0x02].decode('utf-8-sig'),
-        t[0x03].decode('utf-8'),
-        t[0x04].decode('utf-8'),
-        t[0x05].decode('utf-8')
+        t[0x01].decode('utf-8'),   # Seller's name
+        t[0x02].decode('utf-8-sig'), # VAT registration number
+        t[0x03].decode('utf-8'),   # Invoice date and time
+        t[0x04].decode('utf-8'),   # Total amount
+        t[0x05].decode('utf-8')    # VAT amount
     ]
+    
+    # Return the updated DataFrame
     return df
 ```
 
@@ -79,11 +97,17 @@ def add_to_csv(temp):
 import os
 import cv2
 
+# Function to read all images from a folder
 images = []
 for filename in os.listdir(folder):
+    # Use OpenCV to read the image file
     img = cv2.imread(os.path.join(folder, filename))
+    
+    # If the file is not an image, skip it
     if img is not None:
         images.append(img)
+
+# Return the final list of images
 return images
 ```
 
@@ -100,14 +124,15 @@ try:
     t = TLV()
     t.parse_array(temp)
     df.loc[len(df)] = [
-        t[0x01].decode('utf-8'),
-        t[0x02].decode('utf-8-sig'),
-        t[0x03].decode('utf-8'),
-        t[0x04].decode('utf-8'),
-        t[0x05].decode('utf-8')
+        t[0x01].decode('utf-8'),   
+        t[0x02].decode('utf-8-sig'), 
+        t[0x03].decode('utf-8'),   
+        t[0x04].decode('utf-8'),   
+        t[0x05].decode('utf-8')    
     ]
     return df
 except:
+    # Handle any parsing errors and return the DataFrame as-is
     return df
 ```
 
@@ -127,6 +152,7 @@ The GUI, built with Tkinter, simplifies the user interaction:
 This project automates the tedious process of extracting and organizing tax details from receipts, saving time and effort for businesses. With further improvements, it can become an indispensable tool for managing tax compliance in accordance with ZATCA specifications.
 
 ## License
+This project is licensed under the [MIT License](LICENSE).
 
 ## Contributions
 Contributions, issues, and feature requests are welcome! Feel free to open a pull request or an issue.
