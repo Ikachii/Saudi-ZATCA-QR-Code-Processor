@@ -9,8 +9,10 @@ def add_to_csv(temp):
         t = uttlv.TLV()
         t.parse_array(temp)
         df.loc[len(df)] = [t[0x01].decode('utf-8'), t[0x02].decode("utf-8-sig"),t[0x03].decode("utf-8"),t[0x04].decode("utf-8"),t[0x05].decode("utf-8")]
+        print('Decoded Successfully!')
         return df
     except:
+        print('Failure to decode 1 qr code please ensure all qr codes are ZATCA')
         return df
 
     
