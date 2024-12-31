@@ -118,6 +118,7 @@ return images
 2. **Invalid QR Codes:**
     - A `try-except` block handles exceptions from the `uttlv` library.
 
+
 Example:
 ```python
 try:
@@ -135,7 +136,21 @@ except:
     # Handle any parsing errors and return the DataFrame as-is
     return df
 ```
+3. **Blurry or QR code not found in picture**
+    - An `if` statement to check if `Qreader` correctly extracted a QR code
 
+Example:
+```python
+for t in decoded_text:
+    # If statment to check if the returned value is None
+    if t is None:
+        # If so alert the user and continue as usual
+        print('QR Code not detected please take a clearer picture')
+    else:
+        # Otherwise proceed as intended
+        temp = base64.b64decode(t)
+        df = add_to_csv(temp)
+```
 ## GUI
 The GUI, built with Tkinter, simplifies the user interaction:
 - Users can select a folder containing receipt images.
